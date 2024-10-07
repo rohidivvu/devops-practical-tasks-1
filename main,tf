@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Start Nginx
+    service:
+      name: nginx
+      state: started
+      enabled: true
+
+  - name: Install Node.js
+    yum:
+      name: nodejs
+      state: present
+
+  - name: Copy Node.js Application to Nginx Directory
+    copy:
+      src: /path/to/your/nodejs/app/*
+      dest: /usr/share/nginx/html/
+      owner: nginx
+      group: nginx
+
+  - name: Open port 3000 in firewall
+    firewalld:
+      port: 3000/tcp
+      permanent: yes
+      state: enabled
+
+  - name: Restart Nginx to load new configuration
+    service:
+      name: nginx
+      state: restarted
+
